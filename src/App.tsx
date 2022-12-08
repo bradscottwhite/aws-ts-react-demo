@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Amplify, API, graphqlOperation } from "aws-amplify";
-import { createBlog } from "./graphql/mutations";
+import { createBlog, deleteBlog } from "./graphql/mutations";
 import { listBlogs } from "./graphql/queries";
 
 import awsExports from "./aws-exports";
-import { ListBlogsQuery } from "./API";
+import { ListBlogsQuery, Blog } from "./API";
 
 Amplify.configure(awsExports);
 const initialState = { name: "", body: "" };
 
 const App = () => {
   const [formState, setFormState] = useState(initialState);
-  const [blogs, setBlogs] = useState<ListBlogsQuery>();
+  //const [blogs, setBlogs] = useState<ListBlogsQuery>();
+  const [ blogs, setBlogs ] = useState<Blog[]>([]);
 
   useEffect(() => {
     fetchBlogs()
@@ -26,7 +27,9 @@ const App = () => {
       const blogData = (await API.graphql(graphqlOperation(listBlogs))) as {
         data: ListBlogsQuery
       }
-      setBlogs(blogData.data);
+      setBlogs(
+        blogData.data.listBlogs?.items as Blog[]
+      );
     } catch (err) {
       console.log("Error fetching blogs" + err);
     }
@@ -42,6 +45,18 @@ const App = () => {
       }
     } catch (err) {
       console.log("error creating blog: ", err);
+    }
+  };
+
+  const delBlog = async (index: number, id?: string) => {
+    try {
+      await API.graphql(graphqlOperation(deleteBlog, { input: { id } }));
+    } catch (err) {
+      console.log('error deleting blog: ', err);
+    } finally {
+      setBlogs(
+        blogs?.filter(blog => blog?.id !== id)
+      );
     }
   };
 
@@ -66,11 +81,12 @@ const App = () => {
         Create Blog
       </button>
       {blogs &&
-        blogs?.listBlogs?.items?.map((blog, index) => {
+        blogs?.map((blog, index) => {
           return (
             <div key={blog?.id || index} style={styles.todo}>
               <p style={styles.todoName}>{blog?.name}</p>
               <p style={styles.todoDescription}>{blog?.body}</p>
+              <button style={styles.button} onClick={() => delBlog(index, blog?.id)}>Delete</button>
             </div>
           );
         })}
