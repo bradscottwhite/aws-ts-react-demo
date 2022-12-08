@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/aws-ts-react-demo/static/css/main.31d6cfe0.css",
+    "main.js": "/aws-ts-react-demo/static/js/main.4c0a6615.js",
+    "static/js/787.205052b6.chunk.js": "/aws-ts-react-demo/static/js/787.205052b6.chunk.js",
+    "index.html": "/aws-ts-react-demo/index.html",
+    "main.4c0a6615.js.map": "/aws-ts-react-demo/static/js/main.4c0a6615.js.map",
+    "787.205052b6.chunk.js.map": "/aws-ts-react-demo/static/js/787.205052b6.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.31d6cfe0.css",
+    "static/js/main.4c0a6615.js"
+  ]
+}
