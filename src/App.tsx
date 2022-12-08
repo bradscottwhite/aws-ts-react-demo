@@ -1,4 +1,4 @@
-import React, { FC, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Amplify, API, graphqlOperation } from "aws-amplify";
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
@@ -11,20 +11,8 @@ import { ListBlogsQuery, Blog } from "./API";
 Amplify.configure(awsExports);
 const initialState = { name: "", body: "" };
 
-const SignOut: FC<{
-  signOut: any;
-}> = ({ signOut }) => (
-	<div className='flex justify-center'>
-	<button
-		className='bg-emerald-200 hover:bg-emerald-300 hover:scale-110 transition ease-in-out delay-150 duration-300 drop-shadow-xl rounded-md px-6 py-2 text-white font-bold'
-			onClick={signOut}
-		>Sign out</button>
-	</div>
-);
-
 const App = () => {
   const [formState, setFormState] = useState(initialState);
-  //const [blogs, setBlogs] = useState<ListBlogsQuery>();
   const [ blogs, setBlogs ] = useState<Blog[]>([]);
 
   useEffect(() => {
@@ -76,7 +64,7 @@ const App = () => {
   return (
     <div>
       <Authenticator signUpAttributes={[ 'email' ]}>
-				{({ signOut, user }) => (
+        {({ signOut, user }) => (
           <div id="wrapper" style={styles.container}>
             <h2>Amplify Todos</h2>
             <input
@@ -107,7 +95,7 @@ const App = () => {
                 );
               })}
 
-            <SignOut signOut={signOut} />
+            <button style={styles.button} onClick={signOut}>Sign Out</button>
           </div>
         )}
       </Authenticator>
