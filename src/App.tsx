@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { FC, useState, useEffect } from "react";
 import { Amplify, API, graphqlOperation } from "aws-amplify";
+import { Authenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
 import { createBlog, deleteBlog } from "./graphql/mutations";
 import { listBlogs } from "./graphql/queries";
 
@@ -8,6 +10,17 @@ import { ListBlogsQuery, Blog } from "./API";
 
 Amplify.configure(awsExports);
 const initialState = { name: "", body: "" };
+
+const SignOut: FC<{
+  signOut: any;
+}> = ({ signOut }) => (
+	<div className='flex justify-center'>
+	<button
+		className='bg-emerald-200 hover:bg-emerald-300 hover:scale-110 transition ease-in-out delay-150 duration-300 drop-shadow-xl rounded-md px-6 py-2 text-white font-bold'
+			onClick={signOut}
+		>Sign out</button>
+	</div>
+);
 
 const App = () => {
   const [formState, setFormState] = useState(initialState);
@@ -61,35 +74,43 @@ const App = () => {
   };
 
   return (
-    <div id="wrapper" style={styles.container}>
-      <h2>Amplify Todos</h2>
-      <input
-        onChange={handleInputChange}
-        name="name"
-        style={styles.input}
-        value={formState.name}
-        placeholder="Name"
-      />
-      <input
-        onChange={handleInputChange}
-        name="body"
-        style={styles.input}
-        value={formState.body}
-        placeholder="Type your blog..."
-      />
-      <button style={styles.button} onClick={addBlog}>
-        Create Blog
-      </button>
-      {blogs &&
-        blogs?.map((blog, index) => {
-          return (
-            <div key={blog?.id || index} style={styles.todo}>
-              <p style={styles.todoName}>{blog?.name}</p>
-              <p style={styles.todoDescription}>{blog?.body}</p>
-              <button style={styles.button} onClick={() => delBlog(index, blog?.id)}>Delete</button>
-            </div>
-          );
-        })}
+    <div>
+      <Authenticator signUpAttributes={[ 'email' ]}>
+				{({ signOut, user }) => (
+          <div id="wrapper" style={styles.container}>
+            <h2>Amplify Todos</h2>
+            <input
+              onChange={handleInputChange}
+              name="name"
+              style={styles.input}
+              value={formState.name}
+              placeholder="Name"
+            />
+            <input
+              onChange={handleInputChange}
+              name="body"
+              style={styles.input}
+              value={formState.body}
+              placeholder="Type your blog..."
+            />
+            <button style={styles.button} onClick={addBlog}>
+              Create Blog
+            </button>
+            {blogs &&
+              blogs?.map((blog, index) => {
+                return (
+                  <div key={blog?.id || index} style={styles.todo}>
+                    <p style={styles.todoName}>{blog?.name}</p>
+                    <p style={styles.todoDescription}>{blog?.body}</p>
+                    <button style={styles.button} onClick={() => delBlog(index, blog?.id)}>Delete</button>
+                  </div>
+                );
+              })}
+
+            <SignOut signOut={signOut} />
+          </div>
+        )}
+      </Authenticator>
     </div>
   );
 };
